@@ -4,6 +4,7 @@ import math
 import json
 
 class Callable:
+    #ラムダにする
     def sum(arr):
         print('sum')
         return arr[0] + arr[1]
@@ -111,7 +112,7 @@ class Handler:
         # ここでは単純にパラメータの合計を計算して返す例を示します
         method = dict['method']
         params = dict['params']
-
+        #ここはラムダとハッシュマップに書き換える
         if method == 'sum':
             result = Callable.sum(params)
             return {
