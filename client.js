@@ -8,7 +8,7 @@ const client = new net.Socket();
 const request = {
     jsonrpc: '2.0',
     method: 'sum',
-    params: '[1, 2]',
+    params: [1, 2],
     id: 1
 };
 
@@ -30,7 +30,7 @@ function readUserInput(question) {
 (async function main() {
     // 入力からリクエストの更新
     method = await readUserInput('Method? ');
-    params = await readUserInput('Params? ');
+    params = await readUserInput('Params[]? ');
     id = await readUserInput('Id? ');
 
     request.method = method == ""? request.method : method;

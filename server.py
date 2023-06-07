@@ -5,58 +5,73 @@ import json
 
 class Callable:
     #ラムダにする
-    def sum(arr):
+    def sum(args):
         print('sum')
-        return arr[0] + arr[1]
-    
+        def func(args):
+            x = int(args[0])
+            y = int(args[1])
+            return x + y
+        return func(args)
+
     def floor(args):
         print('floor')
-        return math.floor(float(args))
+        def func(args):
+            return math.floor(float(args[0]))
+        return func(args)
     
     def nroot(args):
         print('nroot')
-        args=args[1:-1].split(',')
-        print(args)
-        x = int(args[0])
-        y = int(args[1])
-        print(x,y)
-        return math.pow(x, 1/y)
+        def f(args):
+ 
+            print(args)
+            x = int(args[0])
+            y = int(args[1])
+            print(x,y)
+            return math.pow(x, 1/y)
+        return f(args)
     
     def reverse(args):
         print('reverse')
-        return args[::-1]
+        def f(args):
+            return args[0][::-1]
+        return f(args)
     
     def validAnagram(args):
         print('validAnagram')
-        args=args[1:-1].split(',')
-        # 小文字に変換して、空白を削除します
-        s1 = args[0].lower().replace(" ", "").replace("'","")
-        s2 = args[1].lower().replace(" ", "").replace("'","")
-        print(s2)
+        def f(args):
 
-        if len(s1) != len(s2): return False
+            # 小文字に変換して、空白を削除します
+            s1 = args[0].lower().replace(" ", "").replace("'","")
+            s2 = args[1].lower().replace(" ", "").replace("'","")
+            print(s2)
 
-        # a-z分までのキャッシュを作成します
-        cache = []
-        for i in range(26):
-            cache.append(0)
+            if len(s1) != len(s2): return False
 
-        # s1とs2を同時にチェックします
-        for i in range(len(s1)):
-            # aの文字コードは97
-            # a=97, b=98, c=99, d=100, ... , z=122 を
-            # a=0, b=1, c=2, d=3, ... , z=25 へ変換
-            cache[ord(s1[i]) - 97] += 1
-            cache[ord(s2[i]) - 97] -= 1
+            # a-z分までのキャッシュを作成します
+            cache = []
+            for i in range(26):
+                cache.append(0)
 
-        # 最大値0、最小値0の時のみ、アナグラムになります
-        return max(cache) == 0 and min(cache) == 0
+            # s1とs2を同時にチェックします
+            for i in range(len(s1)):
+                # aの文字コードは97
+                # a=97, b=98, c=99, d=100, ... , z=122 を
+                # a=0, b=1, c=2, d=3, ... , z=25 へ変換
+                cache[ord(s1[i]) - 97] += 1
+                cache[ord(s2[i]) - 97] -= 1
+
+            # 最大値0、最小値0の時のみ、アナグラムになります
+            return max(cache) == 0 and min(cache) == 0
+        return f(args)
     
     def sortArr(args):
         print('sort')
-        args=args[1:-1].replace("'","").split(',')
-        print(args)
-        return sorted(args)
+        def f(args):
+            for i in range(len(args)):
+                args[i] = args[i].replace("'","")
+            newArr = sorted(args)
+            return newArr
+        return f(args)
 
 # ソケット生成クラス
 class Socket:
@@ -111,45 +126,18 @@ class Handler:
                 # リクエストの処理
         # ここでは単純にパラメータの合計を計算して返す例を示します
         method = dict['method']
-        params = dict['params']
-        #ここはラムダとハッシュマップに書き換える
-        if method == 'sum':
-            result = Callable.sum(params)
-            return {
-                'result': result,
-                'error': None,
-                'id': dict['id']
-            }
-        elif method == 'floor':
-            result = Callable.floor(params)
-            return {
-                'result': result,
-                'error': None,
-                'id': dict['id']
-            }
-        elif method == 'nroot':
-            result = Callable.nroot(params)
-            return {
-                'result': result,
-                'error': None,
-                'id': dict['id']
-            }
-        elif method == 'reverse':
-            result = Callable.reverse(params)
-            return {
-                'result': result,
-                'error': None,
-                'id': dict['id']
-            }
-        elif method == 'validAnagram':
-            result = Callable.validAnagram(params)
-            return {
-                'result': result,
-                'error': None,
-                'id': dict['id']
-            }
-        elif method == 'sort':
-            result = Callable.sortArr(params)
+        params = dict['params'][1:-1].split(',')
+        #<string, callable>ハッシュマップ
+        table = {
+            'sum': Callable.sum,
+            'floor': Callable.floor,
+            'nroot': Callable.nroot,
+            'reverse': Callable.reverse,
+            'validAnagram': Callable.validAnagram,
+            'sort': Callable.sortArr,
+        }
+        if table[method]:
+            result = table[method](params)
             return {
                 'result': result,
                 'error': None,
